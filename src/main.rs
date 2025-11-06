@@ -1,3 +1,5 @@
+/// AksumCli: A command-line interface for Aksum operations.
+
 fn main() {
-    println!("Hello, world!");
+    println!("Welcome to AksumCli!");
 }
