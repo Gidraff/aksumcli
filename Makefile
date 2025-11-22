@@ -1,9 +1,11 @@
+NAME="aksumcli"
+
 build:
 	@echo "Building the project..."
 	cargo build
 run:
 	@echo "Running the project..."
-	cargo run 
+	./target/debug/aksumcli --name ${NAME}
 fmt:
 	@echo "Formatting the code..."
 	cargo fmt
