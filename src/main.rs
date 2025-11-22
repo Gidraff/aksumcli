@@ -6,6 +6,7 @@ use clap::Parser;
 use serde::{Deserialize, Serialize};
 use tokio::io::{AsyncReadExt, AsyncWriteExt};
 use tokio::net::TcpListener;
+use crate::scanner::network::scan_network;
 
 /// Simple program to greet a person
 #[derive(Parser, Debug)]
@@ -41,6 +42,7 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
     for _ in 0..args.count {
         println!("Hello {}!", args.name);
     }
+    scan_network();
 
     Ok(())
 }
