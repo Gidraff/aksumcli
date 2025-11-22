@@ -1,48 +1,58 @@
 mod scanner;
 mod utils;
 
-use anyhow::Result;
-use clap::Parser;
-use serde::{Deserialize, Serialize};
-use tokio::io::{AsyncReadExt, AsyncWriteExt};
-use tokio::net::TcpListener;
 use crate::scanner::network::scan_network;
+use anyhow::Result;
+use clap::{Parser, Subcommand};
+use serde::{Deserialize, Serialize};
 
-/// Simple program to greet a person
 #[derive(Parser, Debug)]
-//#[command(version, about, long_about = None)]
-struct Args {
-    /// Name of the person to greet
-    #[arg(short, long)]
-    name: String,
-
-    /// Number of times to greet
-    #[arg(short, long, default_value_t = 1)]
-    count: u8,
+#[command(version, about, long_about = None)]
+struct Cli {
+    #[command(subcommand)]
+    command: Commands,
 }
 
-#[derive(Serialize, Deserialize, Debug)]
-struct Settings {
-    name: String,
-    count: u8,
+#[derive(Subcommand, Debug)]
+enum Commands {
+    ScanPorts {
+        /// Target host IP address
+        #[arg(short = 't', long, default_value = "127.0.0.1")]
+        host: String,
+    },
+    ScanNetwork {
+        /// Target network in CIDR notation
+        #[arg(short, long)]
+        network: String,
+    },
 }
+
+// might need later
+
+// #[derive(Serialize, Deserialize, Debug)]
+// struct Settings {
+//     ip_addr: String,
+// }
 
 #[tokio::main]
 async fn main() -> Result<(), Box<dyn std::error::Error>> {
-    let args = Args::parse();
+    let cli = Cli::parse();
 
-    let settings = Settings {
-        name: args.name.clone(),
-        count: args.count,
-    };
+    // let settings = Settings {
+    //     ip_addr: cli.ip_addr.clone(),
+    // };
 
-    let serialised = serde_json::to_string(&settings).unwrap();
-    println!("Serialized settings: {}", serialised);
-
-    for _ in 0..args.count {
-        println!("Hello {}!", args.name);
+    // let serialised = serde_json::to_string(&settings).unwrap();
+    // println!("Serialized settings: {}", serialised);
+    match &cli.command {
+        Commands::ScanPorts { host } => {
+            println!("Scanning ports on host: {}", host);
+            scan_network(host);
+        }
+        Commands::ScanNetwork { network } => {
+            println!("Scanning network: {}", network);
+        }
     }
-    scan_network();
 
     Ok(())
 }
