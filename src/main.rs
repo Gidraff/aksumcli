@@ -1,9 +1,15 @@
+mod scanner;
+mod utils;
+
+use anyhow::Result;
 use clap::Parser;
 use serde::{Deserialize, Serialize};
+use tokio::io::{AsyncReadExt, AsyncWriteExt};
+use tokio::net::TcpListener;
 
 /// Simple program to greet a person
 #[derive(Parser, Debug)]
-#[command(version, about, long_about = None)]
+//#[command(version, about, long_about = None)]
 struct Args {
     /// Name of the person to greet
     #[arg(short, long)]
@@ -20,7 +26,8 @@ struct Settings {
     count: u8,
 }
 
-fn main() {
+#[tokio::main]
+async fn main() -> Result<(), Box<dyn std::error::Error>> {
     let args = Args::parse();
 
     let settings = Settings {
@@ -34,4 +41,6 @@ fn main() {
     for _ in 0..args.count {
         println!("Hello {}!", args.name);
     }
+
+    Ok(())
 }
